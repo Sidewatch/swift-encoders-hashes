@@ -23,7 +23,7 @@ A dependency-free, read-only toolkit of the everyday developer encode/decode tra
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/arraypress/swift-encoders-hashes.git", from: "1.0.0")
+    .package(url: "https://github.com/Sidewatch/swift-encoders-hashes.git", from: "1.0.0")
 ]
 ```
 
