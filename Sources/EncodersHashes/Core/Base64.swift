@@ -33,16 +33,25 @@ public enum Base64 {
         data.base64EncodedString()
     }
 
-    /// Decode standard Base64 back to a UTF-8 string, or `nil` if the input isn't valid
-    /// Base64 or the decoded bytes aren't valid UTF-8.
+    /// Decode standard Base64 (with or without `=` padding) back to a UTF-8 string, or
+    /// `nil` if the input isn't valid Base64 or the decoded bytes aren't valid UTF-8.
     public static func decode(_ string: String) -> String? {
         guard let data = decodeToData(string) else { return nil }
         return String(data: data, encoding: .utf8)
     }
 
-    /// Decode standard Base64 to raw bytes, or `nil` if the input isn't valid Base64.
+    /// Decode standard Base64 (with or without `=` padding) to raw bytes, or `nil` if the
+    /// input isn't valid Base64. Missing padding is restored before decoding —
+    /// `Data(base64Encoded:)` alone rejects the unpadded form common in pasted tokens.
     public static func decodeToData(_ string: String) -> Data? {
-        Data(base64Encoded: string)
+        var s = string
+        switch s.count % 4 {
+        case 0: break
+        case 2: s += "=="
+        case 3: s += "="
+        default: return nil   // length ≡ 1 (mod 4) is never valid Base64
+        }
+        return Data(base64Encoded: s)
     }
 
     // MARK: - URL-safe (base64url, no padding)

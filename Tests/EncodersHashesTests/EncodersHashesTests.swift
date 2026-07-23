@@ -29,6 +29,15 @@ final class EncodersHashesTests: XCTestCase {
         XCTAssertNil(Base64.decode("/w=="))         // valid Base64 → byte 0xFF → not UTF-8
     }
 
+    // Regression: unpadded standard-alphabet input was rejected while the URL-safe
+    // path re-padded — the standard path now restores '=' padding too.
+    func testBase64StandardDecodesUnpaddedInput() {
+        XCTAssertEqual(Base64.decode("aGVsbG8"), "hello")            // 3 chars short of a quad
+        XCTAssertEqual(Base64.decode("aGk"), "hi")                   // 2-char tail
+        XCTAssertEqual(Base64.decodeToData("aGVsbG8"), Data("hello".utf8))
+        XCTAssertNil(Base64.decodeToData("aGVsbG8x1"))               // length ≡ 1 (mod 4) is never valid
+    }
+
     // MARK: - Base64 (URL-safe)
 
     func testBase64URLSafeUsesDashUnderscoreNoPadding() {
