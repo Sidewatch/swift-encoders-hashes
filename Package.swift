@@ -14,7 +14,8 @@ let package = Package(
         .library(name: "EncodersHashes", targets: ["EncodersHashes"]),
     ],
     targets: [
-        .target(name: "EncodersHashes", path: "Sources"),
+        .target(name: "EncodersHashes", path: "Sources",
+                swiftSettings: [.unsafeFlags(["-strict-concurrency=complete"])]),
         .testTarget(name: "EncodersHashesTests", dependencies: ["EncodersHashes"], path: "Tests"),
     ]
 )
